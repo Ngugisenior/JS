@@ -73,6 +73,7 @@ body{
     justify-content:space-evenly;
 }
 
+#exchange,
 #curr_cov{
     display: flex;
     justify-content: center;
