@@ -49,3 +49,32 @@ body{
     letter-spacing: 5px;
     min-width: 500px;
 }
+
+.finance{
+    width:100%;
+    display: flex;
+    justify-content:space-evenly;
+    flex-wrap: wrap;
+}
+
+.rate{
+    width: 150px;
+    height:100px;
+    display: flex;
+    justify-content:space-evenly;
+    place-items: center;
+    border:1px solid #FFF;
+    border-radius: 5px;
+    margin-top: 2px;
+}
+
+.mgn{
+    display: flex;
+    justify-content:space-evenly;
+}
+
+#curr_cov{
+    display: flex;
+    justify-content: center;
+    place-items: center;
+}
