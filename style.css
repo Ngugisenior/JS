@@ -10,7 +10,17 @@ body{
     justify-content: center;
 
 }
-
+.gh{
+    position: fixed;
+    top: 0;
+    right:0;
+    float:right;
+    z-index: 99999;
+}
+.gh img{
+    max-height: 100%;
+    max-width: 100%;
+}
 #root-date{
     font-size:60px;
     height:100px;
