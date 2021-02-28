@@ -2,6 +2,8 @@ const App = () =>{
     const url = 'https://api.ratesapi.io/api/latest';
 
     const container = document.querySelector('.container');
+    let timer = 0;
+    
 
     // Create play Variables
     const createPlayG = () => {
@@ -34,6 +36,13 @@ const App = () =>{
         }
 
         container.appendChild(div);
+        const btn = document.createElement('button');
+        const t = document.createTextNode('Reset');
+        btn.setAttribute('class', 'reset');
+
+        btn.appendChild(t);
+        btn.addEventListener('click', resetGame);
+        container.appendChild(btn);
     }
 
     //drag function
@@ -53,6 +62,10 @@ const App = () =>{
             number.addEventListener('dragend', dragEnd);
         });
 
+        numbers.forEach(number => {
+            number.addEventListener('dragover', dragOver);
+        });
+
         places.forEach(place => {
             place.addEventListener('dragover', dragOver);
         });
@@ -64,6 +77,7 @@ const App = () =>{
 
         function dragStart(){
             this.classList.add('dragging');
+            timer = new Date();
         };
 
 
@@ -116,15 +130,18 @@ const App = () =>{
                 }
 
                 if(count === 10){
-                    checkOrder(p.children);
+                    const dat = Math.abs(new Date() - new Date(timer))/60;
+                    console.log(dat);
+                    checkOrder(p.children,dat);
                 }
                 
             }
             
         }
 
+        
 
-        function checkOrder(x){
+        function checkOrder(x, tm){
 
             let count = 0;
             for(let i = 0; i < x.length; i++){
@@ -139,18 +156,87 @@ const App = () =>{
                     
                 }
             }
-
+            const div = document.createElement('div');
             if(count === 10){
-                alert('Game Over! <br> You Passed !');
+                const message = `
+                <h1>Success!</h1>
+                <p> You Passed!</p>
+                <br>
+                <p>Elapsed Time: ${tm}</p>
+                <br>
+                <p>Total Points: </p>
+                <h2>${Points("even")}</h2>`;
+                div.innerHTML = message;
+                checkChilds(div);
             }
             else{
-                alert('Game Over! <br> You Failed !');
+                const message = `<h1>Failed!</h1>
+                <p> You Failed!</p>
+                <br>
+                <p>Elapsed Time: ${tm}</p>
+                <br>
+                <p>Total Points: </p>
+                <h2>${Points("even")}</h2>`;
+                div.innerHTML = message;
+                checkChilds(div);
+            }
+            document.querySelector('.hide').className = 'message';
+        }
+
+        /** Checking if the class messagebox contains childrens */
+        function checkChilds(div){
+            if(document.querySelector('.message-box').hasChildNodes() === true){
+                document.querySelector('.message-box').innerHTML = '';
+                document.querySelector('.message-box').removeChild[0];
+                document.querySelector('.message-box').appendChild(div);
             }
         }
 
+
+        (function hidePopup(){
+            const x = document.querySelector('.btn');
+
+            x.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(document.querySelector('.message') !== undefined && document.querySelector('.message') !== null){
+                    const y = document.querySelector('.message');
+                    y.className = 'hide';
+                }
+               
+            })
+        })();
+
+
+        function Points(order){
+            let score = 0;
+
+            switch(order){
+                case 'even':
+                case 'odd':
+                    score = 100;
+                    break;
+
+                case 'fail':
+                    score = 0;
+                default:;
+            }
+
+            return score;
+
+        }
+
+
+    } 
+
+    //ResetGame
+    const resetGame = () =>{
+            const play_g = document.querySelector('.container');
+            play_g.innerHTML = '';
+            drag();
     }
      /** Start By Calling the Drag Event */
     drag();
+   
 
 
 
