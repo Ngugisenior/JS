@@ -1,211 +1,159 @@
-function App(){
-    const root_date = document.createElement('div');
-    const container = document.createElement('div');
-    const mouse = document.createElement('div');
-    const timer = document.createElement('div');
-    const r_nv = document.createElement('div');
-    const section = document.createElement('main');
+const App = () =>{
+    const url = 'https://api.ratesapi.io/api/latest';
 
-    root_date.setAttribute('id','root-date');
-    container.setAttribute('id','container');
-    mouse.setAttribute('id','mouse');
-    timer.setAttribute('id', 'timer');
-    r_nv.setAttribute('id', 'r_nv');
-    section.setAttribute('class', 'section');
+    const container = document.querySelector('.container');
 
-    document.body.appendChild(root_date);
-    document.body.appendChild(container);
-    document.body.appendChild(container).appendChild(mouse);
-    document.body.appendChild(container).appendChild(timer);
-    document.body.appendChild(container).appendChild(r_nv);
-
-
-
-    // TODO: Create applications from a JSON file
-
-
-    document.addEventListener('DOMContentLoaded',function(){
-
-
-        var date = new Date();
-        const mx = document.getElementById('mouse');
-        const da = document.getElementById('timer');
-        const rd = document.getElementById('root-date');
-
-        function mousePosition(mouseEvent){
-            var xPos;
-            var yPos;
-        
-            if (mouseEvent){
-                xPos = mouseEvent.screenX;
-                yPos = mouseEvent.screenY;
-            }
-        
-            mx.innerHTML ="<p class=\"mmove\">"+ xPos + "  x  " + yPos+"</p>";
+    // Create play Variables
+    const createPlayG = () => {
+        const d = document.createElement('div');
+        d.setAttribute('class', 'inner_container');
+        for (let i = 1; i < 11; i++) {
+            let dv = document.createElement('div');
+            dv.setAttribute('class', 'holder');
+            let x = document.createElement('div');
+            let t = document.createTextNode(i);
+            x.className = 'number';
+            x.setAttribute('id', i);
+            x.setAttribute('draggable', 'true');
+            x.appendChild(t);
+            dv.appendChild(x)
+            d.appendChild(dv)
         }
-        
-        document.body.onmousemove = mousePosition;
-        
-        
-        rd.innerHTML = '<p>'+date.getFullYear() + '/' +date.getMonth()+ '/'+date.getDate()+'<p>';
-        
-        
-        // GET Time
-        setInterval(function(){
-            let date = new Date();
-            da.innerHTML = (date.getHours() < 10 ? '0' : '') + date.getHours()
-            +'.'+(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-            +'.'+(date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
-        },1000);
 
-
-        // process form dataR
-        if(document.contains(document.getElementById('form_data'))){
-            document.getElementById('btn').addEventListener('click', function(event){
-                event.preventDefault();
-               
-                const from = document.getElementById('from').value.toUpperCase();
-                const to = document.getElementById('to').value.toUpperCase();
-                const amount = document.getElementById('amount').value;
-
-                if(emptyCheck(from) === 0 && emptyCheck(to) === 0 && emptyCheck(amount) === 0){
-                    currencyCalculator(from, to,parseInt(amount));
-                }
-            })
-        }
-        
-
-        function emptyCheck(xz){
-            var zx = 0;
-            if(xz === "" || xz === 'null'){
-                alert("cannot be empty or null!");
-                zx = 1;
-            }
-
-            return zx;
-        }
-        
-
-    })
-
-
-    /*************Fetch API data************** */ 
-    async function fetchData(){
-        const url = 'https://api.ratesapi.io/api/latest';
-    
-        const response = await fetch(url);
-        const data =  await response.json();
-    
-        const dataR = data.rates;
-    
-        var elems_arays = []
-        
-        for (let i = 0; i < Object.keys(dataR).length; i++) {
-    
-            elems_arays.push({
-                'curr': Object.keys(dataR)[i],
-                'rate': Object.values(dataR)[i]
-            });
-    
-            
-        }
-        return elems_arays;
+        container.appendChild(d);
     }
-    
-    var d = fetchData();
-    
-    d.then(function(res){
-    
-        const s  = document.createElement('div');
-        s.setAttribute('id', 'exchange');
-        s.setAttribute('class', 'finance');
-    
-        for (let i = 0; i < res.length; i++) {
-    
-            const rate_con = document.createElement('div');
-    
-            const rate = document.createElement('p');
-            const rate_r = document.createElement('p');
-        
-            rate_con.className = 'rate';
-    
-            rate.innerHTML = res[i].curr;
-            rate_r.innerHTML = res[i].rate;
-    
-            rate_con.appendChild(rate);
-            rate_con.appendChild(rate_r);
-    
-            s.appendChild(rate_con);
+    //create place holder after drag
+    const createPlayPlace = () => {
+        const div = document.createElement('div');
+        div.setAttribute('class', 'play_container');
+
+        for (let i = 1; i < 11; i++) {
+            let x = document.createElement('div');
+            x.setAttribute('class', 'place');
+            div.appendChild(x);
         }
-        
-        section.appendChild(s)
-    });
-    
-/************* calculate currency ******************* */
-    function currencyCalculator(cur, cur_2, amount){
-        var res = 0;
-        d.then(function(res){
-            for (let i = 0; i < res.length; i++) {
-                if(res[i].curr.localeCompare(cur) === 0){
-                    for (let j=0; j <res.length; j++) {
-                        if(res[j].curr.localeCompare(cur_2) === 0){
-                            const result = document.getElementById('results');
-                            res = ((parseFloat(res[j].rate)*parseFloat(amount))/parseFloat(res[i].rate));
-                            //alert((Math.round((res*100))/100).toFixed(3));
-                            result.innerHTML=(Math.round((res*100))/100).toFixed(3) + ' ' + cur_2;
-                        }
+
+        container.appendChild(div);
+    }
+
+    //drag function
+    const drag = () => {
+        createPlayG();
+        createPlayPlace();
+
+
+        const numbers = document.querySelectorAll('.number');
+        const places = document.querySelectorAll('.place');
+
+        numbers.forEach(number => {
+            number.addEventListener('dragstart', dragStart);
+        });
+
+        numbers.forEach(number => {
+            number.addEventListener('dragend', dragEnd);
+        });
+
+        places.forEach(place => {
+            place.addEventListener('dragover', dragOver);
+        });
+
+        places.forEach(place => {
+            place.addEventListener('drop', dragDrop);
+        })
+
+
+        function dragStart(){
+            this.classList.add('dragging');
+        };
+
+
+        function dragEnd(){
+            this.classList.remove('dragging');
+        }
+
+        function dragOver(e){
+            e.preventDefault();
+        }
+
+        function dragDrop(){
+
+            let counter = 0;
+
+            const x = document.querySelector('.inner_container');
+            const p = document.querySelector('.play_container');
+
+            if(this.hasChildNodes() === true){
+
+                for(let r = 0 ; r < x.children.length; r++){
+                    if(x.children[r].hasChildNodes() === false){
+
+                       x.children[r].appendChild(this.childNodes[0]);
+                       break;
+                        
                     }
                 }
-            }
-        })
-    
-        return res;
-    }
-    
-    
-    function createForm(){
-    
-        const str = `
-        <form id="form_data">
-            <div class="elem">
-                <label for="cur_1">From:</label>
-                <input id="from" type="text" name="from"/>
-            </div>
-            <div class="elem">
-                <label for="cur_1">To:</label>
-                <input id="to" type="text" name="to"/>
-            </div>
-    
-            <div class="elem">
-                <label for="cur_2">Amount:</label>
-                <input id="amount" type="number" name="amount"/>
-            </div>
-            <div class="elem">
-                <input type="submit" id="btn" value="equals"/>
-            </div>    
-            <div class="elem">
-                <label>Result:</label>
-                <div id="results"></div>
-            </div>
 
-        </form>
-        `;
-        const sr = document.createElement('section');
-        sr.setAttribute('id', 'curr_cov');
-        sr.innerHTML = str;
-        section.appendChild(sr);
+                this.appendChild(document.querySelector('.dragging'));
+            }
+            else{
+                this.appendChild(document.querySelector('.dragging'));
+            }
+
+            for(let j = 0; j <x.children.length; j++){
+
+                if(x.children[j].hasChildNodes() === false){
+                    counter=counter;
+                }
+            }
+
+
+            if(counter === 0){
+                let count = 0;
+                for(let i = 0; i < p.children.length; i++){
+                    if(p.children[i].hasChildNodes() === true){
+                        count++;
+                    }
+                }
+
+                if(count === 10){
+                    checkOrder(p.children);
+                }
+                
+            }
+            
+        }
+
+
+        function checkOrder(x){
+
+            let count = 0;
+            for(let i = 0; i < x.length; i++){
+
+                if(x[i].hasChildNodes() === true){
+
+                    if(parseInt(x[i].children[0].id) === (i+1)){
+
+                        count++;
+                    }
+                    
+                    
+                }
+            }
+
+            if(count === 10){
+                alert('Game Over! <br> You Passed !');
+            }
+            else{
+                alert('Game Over! <br> You Failed !');
+            }
+        }
+
     }
-    createForm();
-    section.style.height = window.innerHeight+'px';
-    document.body.appendChild(section);
+     /** Start By Calling the Drag Event */
+    drag();
+
+
 
 }
 
-
 App();
-
-
-
-
-
-
