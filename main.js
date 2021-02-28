@@ -130,8 +130,8 @@ const App = () =>{
                 }
 
                 if(count === 10){
-                    const dat = Math.abs(new Date() - new Date(timer))/60;
-                    console.log(dat);
+                    const dat = parseInt(Math.abs(new Date() - new Date(timer))/60);
+                    console.log(parseInt(dat));
                     checkOrder(p.children,dat);
                 }
                 
@@ -153,16 +153,16 @@ const App = () =>{
                         count++;
                     }
                     
-                    
                 }
             }
+
             const div = document.createElement('div');
             if(count === 10){
                 const message = `
                 <h1>Success!</h1>
                 <p> You Passed!</p>
                 <br>
-                <p>Elapsed Time: ${tm}</p>
+                <p>Elapsed Time: ${tm} seconds</p>
                 <br>
                 <p>Total Points: </p>
                 <h2>${Points("even")}</h2>`;
@@ -226,6 +226,7 @@ const App = () =>{
         }
 
 
+
     } 
 
     //ResetGame
@@ -242,4 +243,24 @@ const App = () =>{
 
 }
 
-App();
+function startTimer(duration){
+    //var duration = 60 *5;
+    const rd = document.querySelector('.timer');
+    var timer = duration, minutes, seconds, p;
+    setInterval(() =>{
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+       
+        rd.innerHTML =  minutes + ":" + seconds;
+
+        if(--timer < 0){    
+            timer = duration;
+        }
+    }, 1000);
+
+}
+
