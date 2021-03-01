@@ -7,6 +7,7 @@ const App = () =>{
 
     // Create play Variables
     const createPlayG = () => {
+        /** TODO: Shuffle the variables eg. draggable with index one should appear at index 7 at game load */
         const d = document.createElement('div');
         d.setAttribute('class', 'inner_container');
         for (let i = 1; i < 11; i++) {
@@ -130,9 +131,27 @@ const App = () =>{
                 }
 
                 if(count === 10){
-                    const dat = parseInt(Math.abs(new Date() - new Date(timer))/60);
-                    console.log(parseInt(dat));
-                    checkOrder(p.children,dat);
+                    /** TODO: Handle Errors */
+                    const msg = '';
+
+                    if(checkOrder(p.children) === true){
+                        /** TODO: Compute points for this order and display the results on the webpage */
+                        console.log('checkOrder passed');
+                        renderScore('passed', 'asc');
+                    }else{
+                       msg +=' checkOrder failed ';
+                    }
+                    if(checkOddFirstOrder(p.children) === true){
+                        /** TODO: Compute points for this order and display the results on the webpage */
+                        console.log('checkOddFirstOrder passed');
+                        renderScore("passed",'oddFirst');
+                    }
+                    else{
+                        /** TODO: Compute points for this order and display the results on the webpage */
+                        console.log('checkOrderFist failed!');
+                        msg += ' checkOrderFist failed!'
+                        renderScore("failed",'oddFirst');
+                    }
                 }
                 
             }
@@ -141,7 +160,47 @@ const App = () =>{
 
         
 
-        function checkOrder(x, tm){
+
+
+        /**
+         * 
+         * TODO: print  message function 
+         */
+         function renderScore(mesg, challg){
+           const div = document.createElement('div');
+           
+            if(mesg === 'passed'){
+                const message = `
+                <h1>Success!</h1>
+                <p> You Passed!</p>
+                <br>
+                <p>Elapsed Time:  seconds</p>
+                <br>
+                <p>Total Points: </p>
+                <h2>${Points(challg)}</h2>`;
+                div.innerHTML = message;
+                checkChilds(div);
+            }
+            if(mesg === 'failed'){
+                const message = `<h1>Failed!</h1>
+                <p> You Failed!</p>
+                <br>
+                <p>Elapsed Time: </p>
+                <br>
+                <p>Total Points: </p>
+                <h2>${Points(challg)}</h2>`;
+                div.innerHTML = message;
+                checkChilds(div);
+            }
+            document.querySelector('.hide').className = 'message';
+         }
+        /**
+         * 
+         * In the order of 1-10 (Ascending order)
+         * 
+         * Challenge Level 0 ordering by ascending 0-10
+         */
+        function checkOrder(x){
 
             let count = 0;
             for(let i = 0; i < x.length; i++){
@@ -155,32 +214,87 @@ const App = () =>{
                     
                 }
             }
-
-            const div = document.createElement('div');
             if(count === 10){
-                const message = `
-                <h1>Success!</h1>
-                <p> You Passed!</p>
-                <br>
-                <p>Elapsed Time: ${tm} seconds</p>
-                <br>
-                <p>Total Points: </p>
-                <h2>${Points("even")}</h2>`;
-                div.innerHTML = message;
-                checkChilds(div);
+                console.log('Check Order passed');
+                return true;
             }
             else{
-                const message = `<h1>Failed!</h1>
-                <p> You Failed!</p>
-                <br>
-                <p>Elapsed Time: ${tm}</p>
-                <br>
-                <p>Total Points: </p>
-                <h2>${Points("even")}</h2>`;
-                div.innerHTML = message;
-                checkChilds(div);
+                console.log('Check Order Failed ', count);
+                return false;
             }
-            document.querySelector('.hide').className = 'message';
+
+        }
+
+         /** Odd First Order */
+        function checkOddFirstOrder(x){
+
+            /** Arrays to store the Odd and even counts */
+            let oddCount = [];
+            let evenCount = [];
+
+            for(let i = 0; i < x.length; i++){
+
+                if(x[i].hasChildNodes() === true){
+
+                    let j = 0;
+
+                    if (i < 5){
+
+                        if((parseInt(x[i].children[0].id)%2) !== 0){
+
+                            oddCount.push(parseInt(x[i].children[0].id));
+
+                        }
+                    }
+                    else if(i >= 5 && i < 10){
+
+                        if((parseInt(x[i].children[0].id)%2) === 0){
+
+                            evenCount.push(parseInt(x[i].children[0].id));
+
+                        }
+                    }
+                }
+            }
+
+            console.log('Sorting returns ',sorted(oddCount));
+            if(oddCount.length === 5 || evenCount.length === 5){
+                if(sorted(oddCount) === 0 || sorted(evenCount) === 0){
+                    console.log('CheckOdd Or Even Passed');
+                    return true;
+                }
+            }
+            else{
+                console.log('CheckOdd Or Even Failed');
+                return false;
+            }
+        }
+
+        /** TODO: Even First Order */
+        /** TODO: Descending Order */
+        /** TODO: Random numbers generator */
+        /** TODO: Create timeout for each challenge */
+        /** TODO: Create levels forthe challenges starting from the easy one to difficulty ones */
+
+        /** Sorting Array */
+        function sorted(arr){
+
+            let count = 0;
+            for(let i = 0; i < arr.length-1; i++){
+                let n = arr[i];
+                let a = arr[i+1];
+
+
+
+                if(n > a){
+                    count = count + 1;
+                }
+                else{
+                    count = count + 0;
+                }
+            }
+
+            return count;
         }
 
         /** Checking if the class messagebox contains childrens */
@@ -193,6 +307,7 @@ const App = () =>{
         }
 
 
+        /** Hides Popup Message Box */
         (function hidePopup(){
             const x = document.querySelector('.btn');
 
@@ -207,13 +322,23 @@ const App = () =>{
         })();
 
 
+        /** 
+         * TODO: Expand poirts System reward Logic 
+         * */
         function Points(order){
             let score = 0;
 
             switch(order){
+                case 'asc':
+                    score = 50;
+                    break;
                 case 'even':
                 case 'odd':
                     score = 100;
+                    break;
+                case 'oddFirst':
+                case 'evenFirst':
+                    score = 200;
                     break;
 
                 case 'fail':
@@ -243,24 +368,5 @@ const App = () =>{
 
 }
 
-function startTimer(duration){
-    //var duration = 60 *5;
-    const rd = document.querySelector('.timer');
-    var timer = duration, minutes, seconds, p;
-    setInterval(() =>{
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-       
-        rd.innerHTML =  minutes + ":" + seconds;
-
-        if(--timer < 0){    
-            timer = duration;
-        }
-    }, 1000);
-
-}
+App()
 
