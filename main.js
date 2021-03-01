@@ -132,14 +132,14 @@ const App = () =>{
 
                 if(count === 10){
                     /** TODO: Handle Errors */
-                    let msg = '';
+                   // let msg = '';
 
                     if(checkOrder(p.children) === true){
                         /** TODO: Compute points for this order and display the results on the webpage */
                         console.log('checkOrder passed');
                         renderScore('passed', 'asc');
                     }else{
-                       msg +=' checkOrder failed ';
+                       //msg +=' checkOrder failed ';
                        renderScore('failed', 'asc')
                     }
                     if(checkOddFirstOrder(p.children) === true){
@@ -150,7 +150,7 @@ const App = () =>{
                     else{
                         /** TODO: Compute points for this order and display the results on the webpage */
                         console.log('checkOrderFist failed!');
-                        msg += ' checkOrderFist failed!'
+                        //msg += ' checkOrderFist failed!'
                         renderScore("failed",'oddFirst');
                     }
                     if(descending(p.children) === 0){
@@ -281,7 +281,7 @@ const App = () =>{
 
         /** TODO: Even First Order */
 
-        
+
         /** Descending Order */
         function descending(x){
             console.log(x);
