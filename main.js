@@ -132,7 +132,7 @@ const App = () =>{
 
                 if(count === 10){
                     /** TODO: Handle Errors */
-                    const msg = '';
+                    let msg = '';
 
                     if(checkOrder(p.children) === true){
                         /** TODO: Compute points for this order and display the results on the webpage */
@@ -140,6 +140,7 @@ const App = () =>{
                         renderScore('passed', 'asc');
                     }else{
                        msg +=' checkOrder failed ';
+                       renderScore('failed', 'asc')
                     }
                     if(checkOddFirstOrder(p.children) === true){
                         /** TODO: Compute points for this order and display the results on the webpage */
@@ -151,6 +152,13 @@ const App = () =>{
                         console.log('checkOrderFist failed!');
                         msg += ' checkOrderFist failed!'
                         renderScore("failed",'oddFirst');
+                    }
+                    if(descending(p.children) === 0){
+                        console.log('descending passed');
+                        renderScore('passed','desc')
+                    }
+                    else{
+                        console.log('descending failed');
                     }
                 }
                 
@@ -192,7 +200,8 @@ const App = () =>{
                 div.innerHTML = message;
                 checkChilds(div);
             }
-            document.querySelector('.hide').className = 'message';
+            let x = document.querySelector('.hide');
+           // x.className = 'message';
          }
         /**
          * 
@@ -271,7 +280,28 @@ const App = () =>{
         }
 
         /** TODO: Even First Order */
-        /** TODO: Descending Order */
+
+        
+        /** Descending Order */
+        function descending(x){
+            console.log(x);
+
+            let count = 0; 
+            for(let i = 0; i < x.length; i++){
+                if(parseInt(x[i].children[0].id) === (x.length - i)){
+                    count = count+0;
+                    
+                }
+                else{
+                    count = count + 1;
+                }  
+                console.log(x.length - i); 
+            }
+
+
+
+            return count;
+        }
         /** TODO: Random numbers generator */
         /** TODO: Create timeout for each challenge */
         /** TODO: Create levels forthe challenges starting from the easy one to difficulty ones */
@@ -330,6 +360,7 @@ const App = () =>{
 
             switch(order){
                 case 'asc':
+                case 'desc':
                     score = 50;
                     break;
                 case 'even':
