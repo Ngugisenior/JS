@@ -155,7 +155,7 @@ const App = () =>{
                     }
                     if(descending(p.children) === 0){
                         console.log('descending passed');
-                        renderScore('passed','desc')
+                        renderScore("passed","desc");
                     }
                     else{
                         console.log('descending failed');
@@ -201,7 +201,7 @@ const App = () =>{
                 checkChilds(div);
             }
             let x = document.querySelector('.hide');
-           // x.className = 'message';
+            x.className = 'message';
          }
         /**
          * 
